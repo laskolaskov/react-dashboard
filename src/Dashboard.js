@@ -10,10 +10,13 @@ import GridLayout from 'react-grid-layout'
 //components
 import {
     NotificationsContainer,
-    Btn,
     ChartContainer,
-    SymbolSwitch
+    SymbolSwitch,
+    ControlWidget
 } from './Components'
+
+//Material UI Components
+import { Button, Paper, Box, createMuiTheme, ThemeProvider } from '@material-ui/core'
 
 //reducer
 import {
@@ -52,48 +55,41 @@ const Dashboard = (props) => {
         })
     })
 
-    // layout is an array of objects, see the demo for more complete usage
+    const themeConfig = createMuiTheme(state.theme)
+    console.log('theme config :: ', themeConfig)
+
+    // layout for react-grid
     const layout = [
         { i: 'a', x: 0, y: 0, w: 4, h: 6 },
         { i: 'b', x: 4, y: 0, w: 4, h: 6 },
+        { i: 'c', x: 0, y: 8, w: 4, h: 1 },
         { i: 'd', x: 4, y: 7, w: 4, h: 6 },
         { i: 'e', x: 8, y: 0, w: 4, h: 6 }
     ]
 
     return (
-        <div className="dashboard">
-            <h1>React-Dashboard</h1>
-            <GridLayout className="layout" layout={layout} cols={12} rowHeight={30} width={1800}>
-                <div key="a">
-                    <NotificationsContainer notifications={state.notifications} dispatch={dispatch} />
-                </div>
-                <div key="b">
-                    <ChartContainer symbol={state.data.symbol} />
-                </div>
-                <div key="c">
-                    <Btn
-                        text='Add Notification'
-                        onClick={() => {
-                            dispatch({
-                                type: actions.NOTIFICATION_ADD,
-                                payload: {
-                                    id: Date.now(),
-                                    text: 'CUSTOM',
-                                    status: 'ehaaa'
-                                }
-                            })
-                        }}
-                    />
-                </div>
-                <div key="d">
-                    <ChartContainer symbol="YEN" />
-                </div>
-                <div key="e">
-                    <SymbolSwitch dispatch={dispatch} />
-                </div>
-            </GridLayout>
-
-        </div>
+        <ThemeProvider theme={themeConfig}>
+            <Paper>
+                <h1>React-Dashboard</h1>
+                <GridLayout className="layout" layout={layout} cols={12} rowHeight={40} width={1800}>
+                    <Paper elevation={3} key="a">
+                        <NotificationsContainer notifications={state.notifications} dispatch={dispatch} />
+                    </Paper>
+                    <Paper elevation={3} key="b">
+                        <ChartContainer symbol={state.data.symbol} />
+                    </Paper>
+                    <Paper elevation={3} key="c">
+                        <ControlWidget dispatch={dispatch} />
+                    </Paper>
+                    <Paper elevation={3} key="d">
+                        <ChartContainer symbol="YEN" />
+                    </Paper>
+                    <Paper elevation={3} key="e">
+                        <SymbolSwitch dispatch={dispatch} />
+                    </Paper>
+                </GridLayout>
+            </Paper>
+        </ThemeProvider>
     )
 }
 

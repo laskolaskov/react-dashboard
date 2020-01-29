@@ -16,6 +16,11 @@ const initState = {
     ],
     data: {
         symbol: 'BGN'
+    },
+    theme: {
+        palette: {
+            type: 'light'
+        }
     }
 }
 
@@ -23,7 +28,8 @@ const initState = {
 const actions = {
     NOTIFICATION_ADD: '[notifications] add',
     NOTIFICATION_REMOVE: '[notifications] remove',
-    DATA_SWITCH_SYMBOL: '[data] switch symbol'
+    DATA_SWITCH_SYMBOL: '[data] switch symbol',
+    THEME_SWITCH_MODE: '[theme] switch mode'
 }
 
 //notifications reducer
@@ -40,15 +46,31 @@ const notificationsReducer = (state, action) => {
     }
 }
 
-//other reducer
+//data reducer
 const dataReducer = (state, action) => {
     switch (action.type) {
         case actions.DATA_SWITCH_SYMBOL:
+            return {
+                ...state,
+                symbol: action.payload,
+            }
+        default:
+            return { ...state }
+    }
+}
+
+//theme reducer
+const themeReducer = (state, action) => {
+    switch (action.type) {
+        case actions.THEME_SWITCH_MODE:
             console.log('in reducer :: ', action)
             console.log('old state :: ', state)
             const newState = {
                 ...state,
-                symbol: action.payload,
+                palette: {
+                    ...state.palette,
+                    type: state.palette.type === 'light' ? 'dark' : 'light'
+                },
             }
             console.log('new state :: ', newState)
             return newState
@@ -61,7 +83,8 @@ const dataReducer = (state, action) => {
 const reducer = (state, action) => {
     const newState = {
         notifications: notificationsReducer(state.notifications, action),
-        data: dataReducer(state.data, action)
+        data: dataReducer(state.data, action),
+        theme: themeReducer(state.theme, action)
     }
     return newState
 }

@@ -9,12 +9,14 @@ import {
 //other
 import {
     makeChart,
-    createObservable
 } from './data'
 
 import {
     availableSymbols
 } from './priceSummaryFeed/feed'
+
+//Material UI Components
+import { Button } from '@material-ui/core'
 
 import './css/styles.css'
 
@@ -52,12 +54,6 @@ const Notification = (props) => (
     <li onClick={props.onClick}>{props.value}</li>
 )
 
-const Btn = React.memo((props) => {
-    return (
-        <button onClick={props.onClick}>{props.text}</button>
-    )
-})
-
 const ChartContainer = React.memo((props) => {
     //get ref to the rendered child element
     const myRef = useRef()
@@ -81,9 +77,14 @@ const SymbolSwitch = React.memo((props) => {
             {
                 availableSymbols.map((symbol, i) => {
                     return (
-                        <Btn
+                        <Button
                             key={i}
-                            text={`Switch to ${symbol}`}
+                            variant="contained"
+                            color="primary"
+                            style={
+                                { margin: 2 + 'px' }
+                            }
+                            fullWidth={true}
                             onClick={() => {
                                 props.dispatch({ type: actions.DATA_SWITCH_SYMBOL, payload: symbol })
                                 props.dispatch({
@@ -94,7 +95,9 @@ const SymbolSwitch = React.memo((props) => {
                                         status: 'success'
                                     }
                                 })
-                            }} />
+                            }}>
+                            Switch to {symbol}
+                        </Button>
                     )
                 })
             }
@@ -102,11 +105,36 @@ const SymbolSwitch = React.memo((props) => {
     )
 })
 
+const ControlWidget = React.memo((props) => {
+    return (
+        <Button
+            variant="contained"
+            color="secondary"
+            fullWidth={true}
+            onClick={() => {
+                props.dispatch({
+                    type: actions.NOTIFICATION_ADD,
+                    payload: {
+                        id: Date.now(),
+                        text: 'CUSTOM',
+                        status: 'ehaaa'
+                    }
+                })
+                props.dispatch({
+                    type: actions.THEME_SWITCH_MODE
+                })
+            }}
+        >
+            Add Notification
+                    </Button>
+    )
+})
+
 //export
 export {
     NotificationsContainer,
     Notification,
-    Btn,
     ChartContainer,
-    SymbolSwitch
+    SymbolSwitch,
+    ControlWidget
 }
