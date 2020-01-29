@@ -55,8 +55,8 @@ const Dashboard = (props) => {
         })
     })
 
+    //get theme configuration
     const themeConfig = createMuiTheme(state.theme)
-    console.log('theme config :: ', themeConfig)
 
     // layout for react-grid
     const layout = [

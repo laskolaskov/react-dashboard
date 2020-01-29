@@ -68,10 +68,11 @@ const makeChart = (domEl, w, h, symbol) => {
         (err) => console.error(err),
         () => console.log('Data Feed Completed !')
     )
-    //set resize listener to make it responsive on resize
-    new ResizeObserver((e) => {
+    //set resize listener to make the chart responsive on resize
+    const resizeObserver = new ResizeObserver((e) => {
         chart.applyOptions({ width: e[0].target.clientWidth, height: e[0].target.clientHeight })
-    }).observe(domEl)
+    })
+    resizeObserver.observe(domEl)
 
     //return cleanup function
     return () => {
@@ -79,6 +80,8 @@ const makeChart = (domEl, w, h, symbol) => {
         chart.remove()
         //unsub the feed
         sub.unsubscribe()
+        //remove resize listener
+        resizeObserver.unobserve(domEl)
     }
 }
 
