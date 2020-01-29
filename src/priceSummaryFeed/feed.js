@@ -1,5 +1,5 @@
 //const { ConnectableObservable, Observable, Timestamp, fromEvent, interval } = require('rxjs');
-//const { concatMap, takeUntil, take, map, publish } = require('rxjs/operators');
+import { concatMap, takeUntil, take, map, publish }  from 'rxjs/operators'
 
 //custom
 import { PriceAggregator } from './PriceAggregator.js'
@@ -8,8 +8,8 @@ import { PriceFeedFactory } from './PriceFeedFactory.js'
 let feed = null
 
 const getFeed = () => {
-    if(feed) {
-        //return feed
+    if (feed) {
+        return feed
     }
     const feedsCount = 60
     const feedsArr = Array(feedsCount).fill(null).map(() => PriceFeedFactory(Math.floor(Math.random() * (500 - 300) + 300)))
@@ -18,17 +18,28 @@ const getFeed = () => {
 
     const newFeed = aggr.getFeedForTimeFrame(2)
     const feedCon = newFeed.connect()
-    const feedSub = newFeed
-    /* newFeed.subscribe(x => {
-        console.log('feed :: ', x)
-        //console.log(`TIME :: ${Date.now() - START} ms`)
-    }) */
     //set the feed 
     feed = newFeed
     //return
     return newFeed
 }
 
+const getFeedForSymbol = (symbol) => {
+    return getFeed().pipe(
+        //reduce output to only the symbol from agrs
+        map(x => x.reduce((acc, el) => {
+            if (el.symbol === symbol) {
+                acc = el
+            }
+            return acc
+        }, null)),
+    )
+}
+
+const availableSymbols = ['USD', 'BGN', 'GBR', 'YEN']
+
 export {
-    getFeed
+    getFeed,
+    getFeedForSymbol,
+    availableSymbols
 }

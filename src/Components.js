@@ -3,8 +3,6 @@ import React, { useEffect, useReducer, useRef, useCallback } from 'react'
 
 //reducer
 import {
-    reducer,
-    initState,
     actions
 } from './reducer'
 
@@ -13,7 +11,12 @@ import {
     makeChart,
     createObservable
 } from './data'
-import { cleanup } from '@testing-library/react'
+
+import {
+    availableSymbols
+} from './priceSummaryFeed/feed'
+
+import './css/styles.css'
 
 /*
  * Functional components.
@@ -49,31 +52,18 @@ const Notification = (props) => (
     <li onClick={props.onClick}>{props.value}</li>
 )
 
-const AddNotificationBtn = React.memo((props) => {
-    console.log('add n btn props :: ', props)
+const Btn = React.memo((props) => {
     return (
-        <button className='addBtn' onClick={() => {
-            props.dispatch({
-                type: actions.NOTIFICATION_ADD,
-                payload: {
-                    id: Date.now(),
-                    text: 'CUSTOM',
-                    status: 'ehaaa'
-                }
-            })
-        }}>Add Notification</button>
+        <button onClick={props.onClick}>{props.text}</button>
     )
 })
 
 const ChartContainer = React.memo((props) => {
     //get ref to the rendered child element
     const myRef = useRef()
-    console.log('chart data source change :: ', props.data)
     //use effects to create chart
     useEffect(() => {
-        console.log('ref ::', myRef)
         const el = myRef.current
-        console.log('ref.current ::', el)
         const cleanUp = makeChart(el, myRef.current.clientWidth, myRef.current.clientHeight, props.symbol, props.action)
         //clear
         return (() => {
@@ -81,25 +71,42 @@ const ChartContainer = React.memo((props) => {
         })
     })
     return (
-        <div ref={myRef} className="lw-c"></div>
+        <div ref={myRef} className="lw-c" style={{ width: 'auto', height: 100 + '%' }}></div>
     )
-}, (prev, next) => {
-    //simple check to compare received data props
-    return JSON.stringify(prev.data) === JSON.stringify(next.data)
 })
 
-function Test(props) {
-    console.log('test props :: ', props)
+const SymbolSwitch = React.memo((props) => {
     return (
-        <div className="TEST">{Math.random()}</div>
+        <div>
+            {
+                availableSymbols.map((symbol, i) => {
+                    return (
+                        <Btn
+                            key={i}
+                            text={`Switch to ${symbol}`}
+                            onClick={() => {
+                                props.dispatch({ type: actions.DATA_SWITCH_SYMBOL, payload: symbol })
+                                props.dispatch({
+                                    type: actions.NOTIFICATION_ADD,
+                                    payload: {
+                                        id: Date.now(),
+                                        text: `Switched to ${symbol}`,
+                                        status: 'success'
+                                    }
+                                })
+                            }} />
+                    )
+                })
+            }
+        </div>
     )
-}
+})
 
 //export
 export {
     NotificationsContainer,
     Notification,
-    AddNotificationBtn,
+    Btn,
     ChartContainer,
-    Test
+    SymbolSwitch
 }

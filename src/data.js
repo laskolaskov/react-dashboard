@@ -1,7 +1,9 @@
 import { interval } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { createChart, LineStyle } from 'lightweight-charts'
-import { getFeed } from './priceSummaryFeed/feed'
+import {
+    getFeedForSymbol
+} from './priceSummaryFeed/feed'
 
 //create notifications feed
 const createObservable = () => {
@@ -12,20 +14,13 @@ const createObservable = () => {
 
 //create chart
 const makeChart = (domEl, w, h, symbol) => {
+    //console.log(`${symbol} chart :: `, [w, h])
     //get main feed
-    const feed = getFeed().pipe(
-        //reduce output to only the symbol from agrs
-        map(x => x.reduce((acc, el) => {
-            if (el.symbol === symbol) {
-                acc = el
-            }
-            return acc
-        }, null)),
-    )
+    const feed = getFeedForSymbol(symbol)
     //chart configuration
     const chart = createChart(domEl, {
-        width: w ? w : 400,
-        height: h ? h : 300,
+        width: w ? w : 0,
+        height: h ? h : 0,
         timeScale: {
             timeVisible: true,
             secondsVisible: true,
@@ -73,6 +68,11 @@ const makeChart = (domEl, w, h, symbol) => {
         (err) => console.error(err),
         () => console.log('Data Feed Completed !')
     )
+    //set resize listener to make it responsive on resize
+    new ResizeObserver((e) => {
+        chart.applyOptions({ width: e[0].target.clientWidth, height: e[0].target.clientHeight })
+    }).observe(domEl)
+
     //return cleanup function
     return () => {
         //remove chart with its DOM elements

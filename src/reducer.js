@@ -14,25 +14,16 @@ const initState = {
             status: 'success'
         }
     ],
-    data: [
-        { time: Date.now(), value: 230 },
-        /* { time: '2019-04-12', value: 96.63 },
-        { time: '2019-04-13', value: 76.64 },
-        { time: '2019-04-14', value: 81.89 },
-        { time: '2019-04-15', value: 74.43 },
-        { time: '2019-04-16', value: 80.01 },
-        { time: '2019-04-17', value: 96.63 },
-        { time: '2019-04-18', value: 76.64 },
-        { time: '2019-04-19', value: 81.89 },
-        { time: '2019-04-20', value: 74.43 }, */
-    ]
+    data: {
+        symbol: 'BGN'
+    }
 }
 
 //actions
 const actions = {
     NOTIFICATION_ADD: '[notifications] add',
     NOTIFICATION_REMOVE: '[notifications] remove',
-    DATA_APPEND: '[data] append'
+    DATA_SWITCH_SYMBOL: '[data] switch symbol'
 }
 
 //notifications reducer
@@ -52,10 +43,17 @@ const notificationsReducer = (state, action) => {
 //other reducer
 const dataReducer = (state, action) => {
     switch (action.type) {
-        case actions.DATA_APPEND:
-            return [...state]
+        case actions.DATA_SWITCH_SYMBOL:
+            console.log('in reducer :: ', action)
+            console.log('old state :: ', state)
+            const newState = {
+                ...state,
+                symbol: action.payload,
+            }
+            console.log('new state :: ', newState)
+            return newState
         default:
-            return [...state]
+            return { ...state }
     }
 }
 
