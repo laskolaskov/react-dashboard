@@ -13,10 +13,9 @@ const createObservable = () => {
 }
 
 //create chart
-const makeChart = (domEl, w, h, symbol) => {
-    //console.log(`${symbol} chart :: `, [w, h])
+const makeChart = (mainFeed, domEl, w, h, symbol) => {
     //get main feed
-    const feed = getFeedForSymbol(symbol)
+    const feed = getFeedForSymbol(mainFeed, symbol)
     //chart configuration
     const chart = createChart(domEl, {
         width: w ? w : 0,

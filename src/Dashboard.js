@@ -52,11 +52,11 @@ const Dashboard = (props) => {
     const [state, dispatch] = useReducer(reducer, initState)
     //subscribe to notifications feed
     useEffect(() => {
-        const sub = createObservable().subscribe(
+        const sub = props.notificationFeed.subscribe(
             (data) => {
                 dispatch({
                     type: actions.NOTIFICATION_ADD,
-                    payload: data
+                    payload: {id: Date.now(), text: data, status: 'info'}
                 })
             },
             (err) => console.error(err),
@@ -102,7 +102,7 @@ const Dashboard = (props) => {
                         <NotificationsContainer notifications={state.notifications} dispatch={dispatch} />
                     </Paper>
                     <Paper elevation={3} key="b">
-                        <ChartContainer symbol={state.data.symbol} />
+                        <ChartContainer symbol={state.data.symbol} feed={props.mainFeed}/>
                     </Paper>
                     <Paper elevation={3} key="c">
                         <ControlWidget dispatch={dispatch} />

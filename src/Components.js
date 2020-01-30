@@ -110,7 +110,7 @@ const ChartContainer = React.memo((props) => {
     //use effects to create chart
     useEffect(() => {
         const el = myRef.current
-        const cleanUp = makeChart(el, myRef.current.clientWidth, myRef.current.clientHeight, props.symbol, props.action)
+        const cleanUp = makeChart(props.feed, el, myRef.current.clientWidth, myRef.current.clientHeight, props.symbol, props.action)
         //clear
         return (() => {
             cleanUp()
