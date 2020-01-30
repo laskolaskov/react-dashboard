@@ -36,7 +36,7 @@ class PriceAggregator {
                 //publish as ConnectableObservable
                 publish()
             )
-        console.log('FEED :: ', feed)
+        //console.log('FEED :: ', feed)
         return feed
     }
 

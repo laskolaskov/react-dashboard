@@ -5,18 +5,25 @@ import React, {
 } from 'react'
 
 //react-grid-layout
-import GridLayout from 'react-grid-layout'
+import { Responsive, WidthProvider } from 'react-grid-layout'
 
 //components
 import {
     NotificationsContainer,
     ChartContainer,
-    SymbolSwitch,
+    SymbolSwitchWidget,
     ControlWidget
 } from './Components'
 
 //Material UI Components
-import { Button, Paper, Box, createMuiTheme, ThemeProvider } from '@material-ui/core'
+import {
+    createMuiTheme,
+    Paper,
+    AppBar,
+    Toolbar,
+    Typography,
+    ThemeProvider,
+} from '@material-ui/core'
 
 //reducer
 import {
@@ -33,6 +40,11 @@ import {
 //CSS
 import './css/react-grid-styles.css'
 import './css/react-resizable-styles .css'
+//Fonts
+import 'typeface-roboto'
+
+//responsive grid component
+const ResponsiveGridLayout = WidthProvider(Responsive)
 
 
 const Dashboard = (props) => {
@@ -60,18 +72,32 @@ const Dashboard = (props) => {
 
     // layout for react-grid
     const layout = [
-        { i: 'a', x: 0, y: 0, w: 4, h: 6 },
-        { i: 'b', x: 4, y: 0, w: 4, h: 6 },
-        { i: 'c', x: 0, y: 8, w: 4, h: 1 },
-        { i: 'd', x: 4, y: 7, w: 4, h: 6 },
-        { i: 'e', x: 8, y: 0, w: 4, h: 6 }
+        { i: 'a', x: 0, y: 0, w: 4, h: 15 },
+        { i: 'b', x: 4, y: 2, w: 8, h: 13 },
+        { i: 'c', x: 4, y: 0, w: 2, h: 2 },
+        { i: 'd', x: 4, y: 9, w: 8, h: 8 },
+        { i: 'e', x: 6, y: 0, w: 6, h: 2 }
     ]
+
+    const layouts = { lg: layout }
 
     return (
         <ThemeProvider theme={themeConfig}>
             <Paper>
-                <h1>React-Dashboard</h1>
-                <GridLayout className="layout" layout={layout} cols={12} rowHeight={40} width={1800}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <Typography variant="h6">
+                            React-Dashboard
+                     </Typography>
+                    </Toolbar>
+                </AppBar>
+                <ResponsiveGridLayout
+                    className="layout"
+                    layouts={layouts}
+                    rowHeight={40}
+                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                >
                     <Paper elevation={3} key="a">
                         <NotificationsContainer notifications={state.notifications} dispatch={dispatch} />
                     </Paper>
@@ -81,13 +107,10 @@ const Dashboard = (props) => {
                     <Paper elevation={3} key="c">
                         <ControlWidget dispatch={dispatch} />
                     </Paper>
-                    <Paper elevation={3} key="d">
-                        <ChartContainer symbol="YEN" />
-                    </Paper>
                     <Paper elevation={3} key="e">
-                        <SymbolSwitch dispatch={dispatch} />
+                        <SymbolSwitchWidget symbol={state.data.symbol} dispatch={dispatch} />
                     </Paper>
-                </GridLayout>
+                </ResponsiveGridLayout>
             </Paper>
         </ThemeProvider>
     )

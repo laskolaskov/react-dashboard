@@ -88,8 +88,8 @@ const makeChart = (domEl, w, h, symbol) => {
 //helpers
 const createRandomNotification = () => ({
     id: Date.now(),
-    text: 'some random text',
-    status: getRandomArrayElement(['success', 'error', 'warning', 'info'])
+    text: 'Auto Generated Notification',
+    status: getRandomArrayElement(['success', 'error', 'info'])
 })
 
 const getRandomArrayElement = (arr) => {

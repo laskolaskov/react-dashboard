@@ -63,8 +63,6 @@ const dataReducer = (state, action) => {
 const themeReducer = (state, action) => {
     switch (action.type) {
         case actions.THEME_SWITCH_MODE:
-            console.log('in reducer :: ', action)
-            console.log('old state :: ', state)
             const newState = {
                 ...state,
                 palette: {
@@ -72,7 +70,6 @@ const themeReducer = (state, action) => {
                     type: state.palette.type === 'light' ? 'dark' : 'light'
                 },
             }
-            console.log('new state :: ', newState)
             return newState
         default:
             return { ...state }

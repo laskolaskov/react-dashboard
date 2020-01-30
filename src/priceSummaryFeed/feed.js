@@ -1,5 +1,4 @@
-//const { ConnectableObservable, Observable, Timestamp, fromEvent, interval } = require('rxjs');
-import { concatMap, takeUntil, take, map, publish }  from 'rxjs/operators'
+import { map }  from 'rxjs/operators'
 
 //custom
 import { PriceAggregator } from './PriceAggregator.js'
@@ -17,7 +16,7 @@ const getFeed = () => {
     const aggr = new PriceAggregator(feedsArr)
 
     const newFeed = aggr.getFeedForTimeFrame(2)
-    const feedCon = newFeed.connect()
+    /* const feedCon = */ newFeed.connect()
     //set the feed 
     feed = newFeed
     //return

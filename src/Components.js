@@ -1,5 +1,5 @@
 //React
-import React, { useEffect, useReducer, useRef, useCallback } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 //reducer
 import {
@@ -16,43 +16,93 @@ import {
 } from './priceSummaryFeed/feed'
 
 //Material UI Components
-import { Button } from '@material-ui/core'
+import {
+    Button,
+    FormControl,
+    FormLabel,
+    FormControlLabel,
+    RadioGroup,
+    Radio,
+    FormGroup,
+    Switch,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    ListItemSecondaryAction,
+    List,
+    Avatar,
+    IconButton,
+    makeStyles
+} from '@material-ui/core'
+
+//Material Ui Icons
+import DeleteIcon from '@material-ui/icons/Delete'
+import DoneIcon from '@material-ui/icons/Done'
+import ErrorIcon from '@material-ui/icons/Error'
+import InfoIcon from '@material-ui/icons/Notifications'
 
 import './css/styles.css'
+
+//create styles
+const useStyles = makeStyles(theme => ({
+    formControl: {
+        margin: theme.spacing(3),
+    },
+}))
 
 /*
  * Functional components.
  */
 const NotificationsContainer = (props) => {
     return (
-        <ul className='notifications-container'>
-            {
-                props.notifications
-                    //get last 10 notifications
-                    .slice(props.notifications.length > 10 ? props.notifications.length - 10 : 0, props.notifications.length)
-                    //the last shows on top
-                    .reverse()
-                    //map to components
-                    .map((n, k) => {
-                        return (
-                            <Notification
-                                onClick={() => {
-                                    console.log('click', n)
-                                    props.dispatch({ type: actions.NOTIFICATION_REMOVE, payload: n.id })
-                                }}
-                                key={k}
-                                value={`${n.id} : ${n.text} ==> ${n.status}`}
+        <List dense={false}>
+            {props.notifications
+                //get last 10 notifications
+                .slice(props.notifications.length > 10 ? props.notifications.length - 10 : 0, props.notifications.length)
+                //the last shows on top
+                .reverse()
+                //map to components
+                .map((n, k) => {
+                    let icon
+                    switch (n.status) {
+                        case 'error':
+                            icon = <ErrorIcon />
+                            break
+                        case 'success':
+                            icon = <DoneIcon />
+                            break
+                        default:
+                            icon = <InfoIcon />
+                    }
+                    return (
+                        <ListItem key={k}>
+                            <ListItemAvatar>
+                                <Avatar>
+                                    {icon}
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={n.text}
+                                secondary={`${n.status} : ${new Date(n.id).toISOString()}`}
                             />
-                        )
-                    })
+                            <ListItemSecondaryAction>
+                                <IconButton
+                                    edge="end"
+                                    onClick={() => {
+                                        console.log('click', n)
+                                        props.dispatch({ type: actions.NOTIFICATION_REMOVE, payload: n.id })
+                                    }}>
+                                    <DeleteIcon />
+                                </IconButton>
+                            </ListItemSecondaryAction>
+                        </ListItem>
+                    )
+                })
             }
-        </ul>
+        </List>
+
     )
 }
-
-const Notification = (props) => (
-    <li onClick={props.onClick}>{props.value}</li>
-)
 
 const ChartContainer = React.memo((props) => {
     //get ref to the rendered child element
@@ -71,70 +121,93 @@ const ChartContainer = React.memo((props) => {
     )
 })
 
-const SymbolSwitch = React.memo((props) => {
+const SymbolSwitchWidget = React.memo((props) => {
+    const classes = useStyles()
     return (
         <div>
-            {
-                availableSymbols.map((symbol, i) => {
-                    return (
-                        <Button
-                            key={i}
-                            variant="contained"
-                            color="primary"
-                            style={
-                                { margin: 2 + 'px' }
+            <FormControl component="fieldset" className={classes.formControl}>
+                <FormLabel component="legend">Switch Symbol</FormLabel>
+                <RadioGroup
+                    row
+                    name="symbol"
+                    value={props.symbol}
+                    onChange={(e) => {
+                        props.dispatch({ type: actions.DATA_SWITCH_SYMBOL, payload: e.target.value })
+                        props.dispatch({
+                            type: actions.NOTIFICATION_ADD,
+                            payload: {
+                                id: Date.now(),
+                                text: `Switched to ${e.target.value}`,
+                                status: 'success'
                             }
-                            fullWidth={true}
-                            onClick={() => {
-                                props.dispatch({ type: actions.DATA_SWITCH_SYMBOL, payload: symbol })
-                                props.dispatch({
-                                    type: actions.NOTIFICATION_ADD,
-                                    payload: {
-                                        id: Date.now(),
-                                        text: `Switched to ${symbol}`,
-                                        status: 'success'
-                                    }
-                                })
-                            }}>
-                            Switch to {symbol}
-                        </Button>
-                    )
-                })
-            }
+                        })
+                    }}>
+                    {availableSymbols.map((symbol, i) => {
+                        return (
+                            <FormControlLabel
+                                key={i}
+                                value={symbol}
+                                control={<Radio color="primary" />}
+                                label={symbol}
+                            />
+                        )
+                    })}
+                </RadioGroup>
+            </FormControl>
         </div>
     )
 })
 
 const ControlWidget = React.memo((props) => {
+    //local state for switch position
+    const [state, setState] = React.useState(true)
     return (
-        <Button
-            variant="contained"
-            color="secondary"
-            fullWidth={true}
-            onClick={() => {
-                props.dispatch({
-                    type: actions.NOTIFICATION_ADD,
-                    payload: {
-                        id: Date.now(),
-                        text: 'CUSTOM',
-                        status: 'ehaaa'
+        <div>
+            <FormGroup row>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={state}
+                            onChange={(e) => {
+                                props.dispatch({
+                                    type: actions.THEME_SWITCH_MODE
+                                })
+                                setState(e.target.checked)
+                            }}
+                            value="dummy"
+                            color="primary"
+                        />
                     }
-                })
-                props.dispatch({
-                    type: actions.THEME_SWITCH_MODE
-                })
-            }}
-        >
-            Add Notification
-                    </Button>
+                    label="Switch Theme Mode"
+                    labelPlacement="start"
+                />
+            </FormGroup>
+            <Button
+                variant="contained"
+                color="primary"
+                fullWidth={true}
+                onClick={() => {
+                    props.dispatch({
+                        type: actions.NOTIFICATION_ADD,
+                        payload: {
+                            id: Date.now(),
+                            text: 'CUSTOM',
+                            status: 'test'
+                        }
+                    })
+                    /* props.dispatch({
+                        type: actions.THEME_SWITCH_MODE
+                    }) */
+                }}
+            >Add Notification</Button>
+        </div>
     )
 })
 
 //export
 export {
     NotificationsContainer,
-    Notification,
     ChartContainer,
-    SymbolSwitch,
+    SymbolSwitchWidget,
     ControlWidget
 }
