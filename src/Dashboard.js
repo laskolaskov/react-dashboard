@@ -32,11 +32,6 @@ import {
     actions
 } from './reducer'
 
-//data related functions
-import {
-    createObservable,
-} from './data'
-
 //CSS
 import './css/react-grid-styles.css'
 import './css/react-resizable-styles .css'

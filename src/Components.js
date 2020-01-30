@@ -89,7 +89,6 @@ const NotificationsContainer = (props) => {
                                 <IconButton
                                     edge="end"
                                     onClick={() => {
-                                        console.log('click', n)
                                         props.dispatch({ type: actions.NOTIFICATION_REMOVE, payload: n.id })
                                     }}>
                                     <DeleteIcon />
